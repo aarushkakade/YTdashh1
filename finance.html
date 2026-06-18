@@ -1704,12 +1704,12 @@ input[type="date"]::-webkit-calendar-picker-indicator {
       </div>
       <!-- MUTUAL FUNDS -->
       <div class="card nw-subcard">
-        <div class="label" style="display:flex;justify-content:space-between;align-items:center"><span>🪙 MUTUAL FUNDS</span><span id="MUTUAL FUNDSTotal" style="font-size:13px;color:var(--text-primary);font-weight:600">0</span></div>
-        <div id="MUTUAL FUNDSList" class="nw-list"></div>
+        <div class="label" style="display:flex;justify-content:space-between;align-items:center"><span>🪙 MUTUAL FUNDS</span><span id="mutualFundsTotal" style="font-size:13px;color:var(--text-primary);font-weight:600">0</span></div>
+        <div id="mutualFundsList" class="nw-list"></div>
         <div class="quick-add">
-          <input type="text" placeholder="Fund name" id="MUTUAL FUNDSName" />
-          <input type="number" placeholder="Value" id="MUTUAL FUNDSAmount" step="0.01" />
-          <button class="quick-add-btn" id="MUTUAL FUNDSAddBtn">+</button>
+          <input type="text" placeholder="Fund name" id="mutualFundsName" />
+          <input type="number" placeholder="Value" id="mutualFundsAmount" step="0.01" />
+          <button class="quick-add-btn" id="mutualFundsAddBtn">+</button>
         </div>
       </div>
       <!-- Other assets -->
@@ -1940,7 +1940,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   const NW_CATS = [
     { key: 'bank',   listId: 'bankList',   totalId: 'bankTotal',   nameId: 'bankName',   amtId: 'bankAmount',   addId: 'bankAddBtn' },
     { key: 'stocks', listId: 'stocksList', totalId: 'stocksTotal', nameId: 'stocksName', amtId: 'stocksAmount', addId: 'stocksAddBtn' },
-    { key: 'MUTUAL FUNDS', listId: 'MUTUAL FUNDSList', totalId: 'MUTUAL FUNDSTotal', nameId: 'MUTUAL FUNDSName', amtId: 'MUTUAL FUNDSAmount', addId: 'MUTUAL FUNDSAddBtn' },
+    { key: 'MUTUAL FUNDS', listId: 'mutualFundsList', totalId: 'mutualFundsTotal', nameId: 'mutualFundsName', amtId: 'mutualFundsAmount', addId: 'mutualFundsAddBtn' },
     { key: 'other',  listId: 'otherList',  totalId: 'otherTotal',  nameId: 'otherName',  amtId: 'otherAmount',  addId: 'otherAddBtn' }
   ];
   const currencyEl = document.getElementById('netWorthCurrency');
