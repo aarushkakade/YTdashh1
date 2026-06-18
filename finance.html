@@ -1947,14 +1947,14 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   const netWorthTotal = document.getElementById('netWorthTotal');
   const netWorthBreakdown = document.getElementById('netWorthBreakdown');
 
-  let exchangeRates = { ₹: 1, USD: 1, EUR: 1, GBP: 1 };
+  let exchangeRates = { '₹': 1, USD: 1, EUR: 1, GBP: 1 };
   async function loadExchangeRates() {
     try {
-      const res = await fetch('https://open.er-api.com/v6/latest/₹');
+      const res = await fetch('https://open.er-api.com/v6/latest/INR');
       const data = await res.json();
       if (data && data.rates) {
         exchangeRates = {
-          ₹: 1,
+          '₹': 1,
           USD: data.rates.USD || 1,
           EUR: data.rates.EUR || 1,
           GBP: data.rates.GBP || 1
@@ -1966,10 +1966,10 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   }
   loadExchangeRates();
 
-  function fmtMoney(amount₹) {
+  function fmtMoney(amountINR) {
     const symbol = currencyEl ? currencyEl.value : '₹';
     const rate = exchangeRates[symbol] || 1;
-    const num = (Number(amount₹) || 0) * rate;
+    const num = (Number(amountINR) || 0) * rate;
     return symbol + ' ' + num.toLocaleString('en-US', { minimumFractionDigits: num % 1 === 0 ? 0 : 2, maximumFractionDigits: 2 });
   }
 
@@ -2393,11 +2393,11 @@ input[type="date"]::-webkit-calendar-picker-indicator {
       // we store 40000 / USD-per-₹ rate — 31,400 ₹; displays as $40,000.
       const symbol = currencyEl ? currencyEl.value : '₹';
       const rate = exchangeRates[symbol] || 1;
-      const amount₹ = a / rate;
+      const amountINR = a / rate;
       const items = storeGet('nw:' + cat.key) || [];
-      items.push({ name: n, amount: amount₹ });
+      items.push({ name: n, amount: amountINR });
       storeSet('nw:' + cat.key, items);
-      logActivity(cat.key, n, amount₹, 'add');
+      logActivity(cat.key, n, amountINR, 'add');
       nameInput.value = ''; amtInput.value = '';
       renderAllNetWorth();
     }
@@ -2727,7 +2727,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
       if (!n || isNaN(aRaw)) { nEl.focus(); return; }
       const enteredCcy = ccEl ? ccEl.value : '₹';
       const rate = exchangeRates[enteredCcy] || 1;
-      const amount₹ = aRaw / rate;
+      const amountINR = aRaw / rate;
       // Parse "From" selection — value is "catKey::accountName"
       let fromCat = null, fromAccount = null;
       if (fEl && fEl.value) {
@@ -2742,7 +2742,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
       }
       const items = storeGet('subs') || [];
       items.push({
-        name: n, amount: amount₹,
+        name: n, amount: amountINR,
         period: pEl ? pEl.value : 'monthly',
         renewal: rEl && rEl.value ? rEl.value : null,
         entered_amount: aRaw,
@@ -2767,7 +2767,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 
   // ============================================================
   // WISHLIST — items with % of net worth.
-  // Each item is { name, amount₹, ts, ccy }. Stored in 'wishlist'.
+  // Each item is { name, amountINR, ts, ccy }. Stored in 'wishlist'.
   // Colors: <5% green, 5-25% amber, >25% red.
   // ============================================================
   // NOTE: don't use consts here — renderWishlist gets called from inside
@@ -2869,10 +2869,10 @@ input[type="date"]::-webkit-calendar-picker-indicator {
       if (!n || isNaN(aRaw)) { nEl.focus(); return; }
       const enteredCcy = cEl ? cEl.value : '₹';
       const rate = exchangeRates[enteredCcy] || 1;
-      const amount₹ = aRaw / rate;
+      const amountINR = aRaw / rate;
       const arr = storeGet('wishlist') || [];
       arr.push({
-        name: n, amount: amount₹, ts: Date.now(),
+        name: n, amount: amountINR, ts: Date.now(),
         entered_amount: aRaw, entered_currency: enteredCcy
       });
       storeSet('wishlist', arr);
@@ -2948,7 +2948,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
           catKey: cat.key,
           itemIdx: idx,
           itemName: String(it.name || ''),
-          amount₹: Number(it.amount) || 0
+          amountINR: Number(it.amount) || 0
         });
       });
     });
@@ -3082,7 +3082,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
     const ICONS = { bank: '🏦', stocks: '📈', crypto: '🪙', other: '💼' };
     const cost = Number(order.amount) || 0;
     const optsHtml = accounts.map(a => {
-      const insufficient = a.amount₹ < cost - 0.005;
+      const insufficient = a.amountINR < cost - 0.005;
       const cls = 'ord-deduct-opt' + (insufficient ? ' insufficient' : '');
       return '<button class="' + cls + '" '
         + 'data-cat="' + a.catKey + '" '
@@ -3090,7 +3090,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
         + (insufficient ? 'data-insuf="1" ' : '')
         + '>'
         + ICONS[a.catKey] + ' ' + escapeHtml(a.itemName)
-        + '<small>' + fmtMoney(a.amount₹) + (insufficient ? ' · not enough' : ' available') + '</small>'
+        + '<small>' + fmtMoney(a.amountINR) + (insufficient ? ' · not enough' : ' available') + '</small>'
         + '</button>';
     }).join('');
     const chooser = document.createElement('div');
@@ -3181,17 +3181,17 @@ input[type="date"]::-webkit-calendar-picker-indicator {
     }
     const ccy = ccyEl ? ccyEl.value : '₹';
     const rate = exchangeRates[ccy] || 1;
-    const amount₹ = aRaw / rate;
+    const amountINR = aRaw / rate;
     const grand = nwGrand₹();
     const parsed = parseFromValue(fromEl ? fromEl.value : '');
     const fromName = parsed.name || (ORD_FROM_META[parsed.cat] || ORD_FROM_META.bank).name;
     if (grand > 0) {
-      const pct = (amount₹ / grand) * 100;
+      const pct = (amountINR / grand) * 100;
       const cls = ordPctClass(pct);
-      prev.textContent = fmtMoney(amount₹) + ' from ' + fromName + ' · ' + pct.toFixed(2) + '% of your ' + fmtMoney(grand) + ' net worth';
+      prev.textContent = fmtMoney(amountINR) + ' from ' + fromName + ' · ' + pct.toFixed(2) + '% of your ' + fmtMoney(grand) + ' net worth';
       prev.className = 'ord-add-preview ' + (cls === 'good' ? '' : cls);
     } else {
-      prev.textContent = fmtMoney(amount₹) + ' from ' + fromName + ' · add net worth first to see %';
+      prev.textContent = fmtMoney(amountINR) + ' from ' + fromName + ' · add net worth first to see %';
       prev.className = 'ord-add-preview';
     }
   }
@@ -3208,13 +3208,13 @@ input[type="date"]::-webkit-calendar-picker-indicator {
       if (!n || isNaN(aRaw)) { nEl.focus(); return; }
       const ccy = cEl ? cEl.value : '₹';
       const rate = exchangeRates[ccy] || 1;
-      const amount₹ = aRaw / rate;
+      const amountINR = aRaw / rate;
       const parsed = parseFromValue(fEl ? fEl.value : '');
       const arr = storeGet('incoming_orders') || [];
       arr.push({
         id: 'o_' + Date.now() + '_' + Math.floor(Math.random() * 9999),
         name: n,
-        amount: amount₹,
+        amount: amountINR,
         entered_amount: aRaw,
         entered_currency: ccy,
         fromCat: parsed.cat || 'bank',
