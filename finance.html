@@ -2011,8 +2011,8 @@ input[type="date"]::-webkit-calendar-picker-indicator {
     if (amtEl.querySelector('input')) return;
     const symbol = currencyEl ? currencyEl.value : '₹';
     const rate = exchangeRates[symbol] || 1;
-    const cur₹ = Number(items[idx].amount) || 0;
-    const curDisplay = cur₹ * rate;
+    const curINR = Number(items[idx].amount) || 0;
+    const curDisplay = curINR * rate;
     const input = document.createElement('input');
     input.type = 'text';
     input.inputMode = 'decimal';
@@ -2036,12 +2036,12 @@ input[type="date"]::-webkit-calendar-picker-indicator {
         if (!isNaN(n)) nextDisplay = n;
       }
       if (nextDisplay < 0) nextDisplay = 0;
-      const next₹ = nextDisplay / rate;
-      const delta₹ = next₹ - cur₹;
-      items[idx].amount = next₹;
+      const nextINR = nextDisplay / rate;
+      const deltaINR = nextINR - curINR;
+      items[idx].amount = nextINR;
       storeSet('nw:' + catKey, items);
-      if (Math.abs(delta₹) > 0.005) {
-        logActivity(catKey, items[idx].name, delta₹, 'edit');
+      if (Math.abs(deltaINR) > 0.005) {
+        logActivity(catKey, items[idx].name, deltaINR, 'edit');
       }
       renderAllNetWorth();
     }
@@ -2102,9 +2102,9 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   // ============================================================
   const ACTIVITY_KEY = 'nw:activity';
   const ACTIVITY_MAX = 50;
-  function logActivity(catKey, name, delta₹, kind) {
+  function logActivity(catKey, name, deltaINR, kind) {
     const arr = storeGet(ACTIVITY_KEY) || [];
-    arr.push({ ts: Date.now(), cat: catKey, name: String(name || ''), delta: Number(delta₹) || 0, kind: kind || 'add' });
+    arr.push({ ts: Date.now(), cat: catKey, name: String(name || ''), delta: Number(deltaINR) || 0, kind: kind || 'add' });
     if (arr.length > ACTIVITY_MAX) arr.splice(0, arr.length - ACTIVITY_MAX);
     storeSet(ACTIVITY_KEY, arr);
   }
@@ -2212,10 +2212,10 @@ input[type="date"]::-webkit-calendar-picker-indicator {
     });
     // Subs annualized — one aggregate slice (no per-sub breakdown here).
     const subItems = storeGet('subs') || [];
-    const annualSubs₹ = subItems.reduce((s, it) => s + monthlyEquivalent(it) * 12, 0);
-    if (annualSubs₹ > 0) {
+    const annualSubsINR = subItems.reduce((s, it) => s + monthlyEquivalent(it) * 12, 0);
+    if (annualSubsINR > 0) {
       const meta = NW_SLICE_META.subs;
-      slices.push({ key: 'subs', name: meta.name, color: meta.color, value: annualSubs₹ });
+      slices.push({ key: 'subs', name: meta.name, color: meta.color, value: annualSubsINR });
     }
 
     const sliceTotal = slices.reduce((s, x) => s + x.value, 0);
@@ -2262,8 +2262,8 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   // Net-worth history chart
   const NW_HISTORY_KEY = 'nw:history';
   const NW_HISTORY_MAX = 500;
-  function logNetWorthSnapshot(grand₹) {
-    const v = Number(grand₹) || 0;
+  function logNetWorthSnapshot(grandINR) {
+    const v = Number(grandINR) || 0;
     const hist = storeGet(NW_HISTORY_KEY) || [];
     const last = hist[hist.length - 1];
     if (last && Math.abs((last.v || 0) - v) < 0.005) return;
@@ -2773,7 +2773,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   // NOTE: don't use consts here — renderWishlist gets called from inside
   // renderAllNetWorth which runs BEFORE this section's code (temporal dead
   // zone). All DOM lookups happen inside the function body instead.
-  function nwGrand₹() {
+  function nwgrandINR() {
     let g = 0;
     NW_CATS.forEach(cat => {
       const items = storeGet('nw:' + cat.key) || [];
@@ -2796,7 +2796,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
     const heroFill    = document.getElementById('wishHeroFill');
     if (!wishList) return;
     const items = storeGet('wishlist') || [];
-    const grand = nwGrand₹();
+    const grand = nwgrandINR();
     let total = 0;
     items.forEach(it => { total += Number(it.amount) || 0; });
 
@@ -2982,7 +2982,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
     // Refresh the "From" dropdown so newly added/renamed/deleted NW accounts show up.
     populateOrdFromSelect();
     const items = storeGet('incoming_orders') || [];
-    const grand = nwGrand₹();
+    const grand = nwgrandINR();
     if (count) count.textContent = items.length + (items.length === 1 ? ' item' : ' items');
     // Always clear before painting — earlier this re-rendered as an APPEND
     // (so every NW change duplicated the cards). Now it's an idempotent paint.
@@ -3123,7 +3123,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
       return;
     }
     const cost = Number(order.amount) || 0;
-    const grandBefore = nwGrand₹();
+    const grandBefore = nwgrandINR();
     const pctAtDeduction = grandBefore > 0 ? (cost / grandBefore) * 100 : 0;
     // Subtract from the chosen NW account
     items[itemIdx].amount = (Number(items[itemIdx].amount) || 0) - cost;
@@ -3182,7 +3182,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
     const ccy = ccyEl ? ccyEl.value : '₹';
     const rate = exchangeRates[ccy] || 1;
     const amountINR = aRaw / rate;
-    const grand = nwGrand₹();
+    const grand = nwgrandINR();
     const parsed = parseFromValue(fromEl ? fromEl.value : '');
     const fromName = parsed.name || (ORD_FROM_META[parsed.cat] || ORD_FROM_META.bank).name;
     if (grand > 0) {
