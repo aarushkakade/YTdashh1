@@ -785,7 +785,7 @@ html, body { scrollbar-width: none; -ms-overflow-style: none; }
 .ord-card:hover { background: rgba(255,255,255,0.045); }
 .ord-card.cat-bank   { border-left-color: #7DD3FC; }
 .ord-card.cat-stocks { border-left-color: #6EE7B7; }
-.ord-card.cat-crypto { border-left-color: #FBBF24; }
+.ord-card.cat-MUTUAL FUNDS { border-left-color: #FBBF24; }
 .ord-card.cat-other  { border-left-color: #B794F4; }
 .ord-card-h {
   display: grid; grid-template-columns: 1fr auto auto;
@@ -1702,14 +1702,14 @@ input[type="date"]::-webkit-calendar-picker-indicator {
           <button class="quick-add-btn" id="stocksAddBtn">+</button>
         </div>
       </div>
-      <!-- Crypto -->
+      <!-- MUTUAL FUNDS -->
       <div class="card nw-subcard">
-        <div class="label" style="display:flex;justify-content:space-between;align-items:center"><span>🪙 Crypto</span><span id="cryptoTotal" style="font-size:13px;color:var(--text-primary);font-weight:600">0</span></div>
-        <div id="cryptoList" class="nw-list"></div>
+        <div class="label" style="display:flex;justify-content:space-between;align-items:center"><span>🪙 MUTUAL FUNDS</span><span id="MUTUAL FUNDSTotal" style="font-size:13px;color:var(--text-primary);font-weight:600">0</span></div>
+        <div id="MUTUAL FUNDSList" class="nw-list"></div>
         <div class="quick-add">
-          <input type="text" placeholder="Coin / wallet" id="cryptoName" />
-          <input type="number" placeholder="Value" id="cryptoAmount" step="0.01" />
-          <button class="quick-add-btn" id="cryptoAddBtn">+</button>
+          <input type="text" placeholder="Fund name" id="MUTUAL FUNDSName" />
+          <input type="number" placeholder="Value" id="MUTUAL FUNDSAmount" step="0.01" />
+          <button class="quick-add-btn" id="MUTUAL FUNDSAddBtn">+</button>
         </div>
       </div>
       <!-- Other assets -->
@@ -1909,7 +1909,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   const ORD_FROM_META = {
     bank:   { name: 'Bank',   color: '#7DD3FC' },
     stocks: { name: 'Stocks', color: '#6EE7B7' },
-    crypto: { name: 'Crypto', color: '#FBBF24' },
+    MUTUAL FUNDS: { name: 'MUTUAL FUNDS', color: '#FBBF24' },
     other:  { name: 'Other',  color: '#B794F4' }
   };
 
@@ -1940,7 +1940,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   const NW_CATS = [
     { key: 'bank',   listId: 'bankList',   totalId: 'bankTotal',   nameId: 'bankName',   amtId: 'bankAmount',   addId: 'bankAddBtn' },
     { key: 'stocks', listId: 'stocksList', totalId: 'stocksTotal', nameId: 'stocksName', amtId: 'stocksAmount', addId: 'stocksAddBtn' },
-    { key: 'crypto', listId: 'cryptoList', totalId: 'cryptoTotal', nameId: 'cryptoName', amtId: 'cryptoAmount', addId: 'cryptoAddBtn' },
+    { key: 'MUTUAL FUNDS', listId: 'MUTUAL FUNDSList', totalId: 'MUTUAL FUNDSTotal', nameId: 'MUTUAL FUNDSName', amtId: 'MUTUAL FUNDSAmount', addId: 'MUTUAL FUNDSAddBtn' },
     { key: 'other',  listId: 'otherList',  totalId: 'otherTotal',  nameId: 'otherName',  amtId: 'otherAmount',  addId: 'otherAddBtn' }
   ];
   const currencyEl = document.getElementById('netWorthCurrency');
@@ -2162,7 +2162,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   const NW_SLICE_META = {
     bank:   { name: 'Bank',     color: '#7DD3FC' },
     stocks: { name: 'Stocks',   color: '#6EE7B7' },
-    crypto: { name: 'Crypto',   color: '#FBBF24' },
+    MUTUAL FUNDS: { name: 'MUTUAL FUNDS',   color: '#FBBF24' },
     other:  { name: 'Other',    color: '#B794F4' },
     subs:   { name: 'Subs/yr',  color: '#FF8A8A' }
   };
@@ -2578,7 +2578,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
     if (!sel) return;
     const prev = sel.value;
     const accounts = (typeof listAllNwAccounts === 'function') ? listAllNwAccounts() : [];
-    const ICONS = { bank: '🏦', stocks: '📈', crypto: '🪙', other: '💼' };
+    const ICONS = { bank: '🏦', stocks: '📈', MUTUAL FUNDS: '🪙', other: '💼' };
     if (!accounts.length) {
       sel.innerHTML = '<option value="">No accounts yet</option>';
       sel.disabled = true;
@@ -2656,7 +2656,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
     ).join('');
     // Build From-account options from the live NW accounts
     const accounts = (typeof listAllNwAccounts === 'function') ? listAllNwAccounts() : [];
-    const ICONS = { bank: '🏦', stocks: '📈', crypto: '🪙', other: '💼' };
+    const ICONS = { bank: '🏦', stocks: '📈', MUTUAL FUNDS: '🪙', other: '💼' };
     const currentFrom = (it.fromCat && it.fromAccount) ? (it.fromCat + '::' + it.fromAccount) : '';
     const fromOpts = '<option value="">No account linked</option>' + accounts.map(a => {
       const v = a.catKey + '::' + a.itemName;
@@ -2961,7 +2961,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
     if (!sel) return;
     const accounts = listAllNwAccounts();
     const prev = sel.value;
-    const ICONS = { bank: '🏦', stocks: '📈', crypto: '🪙', other: '💼' };
+    const ICONS = { bank: '🏦', stocks: '📈', MUTUAL FUNDS: '🪙', other: '💼' };
     if (!accounts.length) {
       sel.innerHTML = '<option value="">No accounts yet</option>';
       sel.disabled = true;
@@ -3079,7 +3079,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
       alert('Add at least one net worth account before deducting.');
       return;
     }
-    const ICONS = { bank: '🏦', stocks: '📈', crypto: '🪙', other: '💼' };
+    const ICONS = { bank: '🏦', stocks: '📈', MUTUAL FUNDS: '🪙', other: '💼' };
     const cost = Number(order.amount) || 0;
     const optsHtml = accounts.map(a => {
       const insufficient = a.amountINR < cost - 0.005;
