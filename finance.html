@@ -3370,6 +3370,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   function safeRenderTicker() {
     try { renderTicker(); } catch (e) { console.error('ticker render failed', e); }
   }
+  initFinanceFromSupabase();
   safeRenderTicker();
   setInterval(safeRenderTicker, 1500);
 
